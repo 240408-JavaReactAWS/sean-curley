@@ -5,7 +5,6 @@ This is a simple REST backend API for CRUD operations on the Item table in a loc
 
 package com.revature.ppp;
 
-import com.revature.controllers.CarController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
