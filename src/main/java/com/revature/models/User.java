@@ -17,8 +17,7 @@ public class User {
     private int userId;
     private String username;
     private String password;
-    private String token = null;
-
+    private boolean isAdmin = false;
 
     //No-args constructor for Jackston databind
     public User(){ }
@@ -34,6 +33,13 @@ public class User {
     {
         this.username = username;
         this.password = password;
+    }
+
+    public User(String username, String password, boolean isAdmin)
+    {
+        this.username = username;
+        this.password = password;
+        this.isAdmin = isAdmin;
     }
 
     public int getUserId() {
@@ -67,5 +73,18 @@ public class User {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public boolean isIsAdmin() {
+        return this.isAdmin;
+    }
+
+    public boolean getIsAdmin() {
+        return this.isAdmin;
+    }
+
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+    private String token = null;
 
 }

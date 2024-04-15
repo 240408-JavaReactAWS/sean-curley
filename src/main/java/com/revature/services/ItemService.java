@@ -35,12 +35,12 @@ public class ItemService {
     {
         List<Item> toRet = new ArrayList<Item>();
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        if(user.getUserId() == 1)
+        if(user.getIsAdmin() == true)
         {
             toRet.addAll(itemDAO.findAll());
         }
         else{
-            Optional<List<Item>> mightBeAList = itemDAO.findByUser(user);
+            Optional<List<Item>> mightBeAList = itemDAO.findByUserId(user.getUserId());
             if(mightBeAList.isPresent())
             {
                 toRet.addAll(mightBeAList.get());
@@ -58,7 +58,7 @@ public class ItemService {
     public Item getItemById(int id, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
+        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         return itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
     }
 
@@ -82,7 +82,7 @@ public class ItemService {
     public Item updateItemById(Item item, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
+        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toChange = itemDAO.findById(item.getItemId()).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         toChange.setName(item.getName());
         toChange.setBiggerThanBreadBox(item.isBiggerThanBreadBox());
@@ -98,7 +98,7 @@ public class ItemService {
     public Item updateItemNameById(int id, String newName, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
+        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toRet = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         toRet.setName(newName);
         itemDAO.save(toRet);
@@ -113,7 +113,7 @@ public class ItemService {
     public Item updateItemSizeById(int id, boolean newSize, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
+        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toRet = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         toRet.setBiggerThanBreadBox(newSize);
         itemDAO.save(toRet);
@@ -128,7 +128,7 @@ public class ItemService {
     public Item deleteItemById(int id, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
+        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toDel = new Item();
         toDel = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         itemDAO.deleteById(id);

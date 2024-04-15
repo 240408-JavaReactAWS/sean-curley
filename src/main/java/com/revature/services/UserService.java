@@ -59,7 +59,10 @@ public class UserService {
     {
         User toRet = userDAO.findByUsernameAndPassword(username, password).orElseThrow(() -> new InvalidAuthenticationException(
             "That username/password combination is not present in the database."));
-        toRet.setToken(generateToken());
+
+        //For now, just set the token to the username
+        //toRet.setToken(generateToken());
+        toRet.setToken(username);
         userDAO.save(toRet);
         return toRet;
     }

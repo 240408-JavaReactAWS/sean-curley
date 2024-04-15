@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 //JpaRepository already has the necessary CRUD operations for a DAO, so we just extend that
 @Repository
 public interface ItemDAO extends JpaRepository<Item, Integer> {
-    public Optional<List<Item>> findByUser(User user);
+    public Optional<List<Item>> findByUserId(int userId);
 }
