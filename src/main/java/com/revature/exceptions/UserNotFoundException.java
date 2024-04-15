@@ -1,5 +1,9 @@
-package com.revature.services;
+package com.revature.exceptions;
 
-public class UserNotFoundException {
+public class UserNotFoundException extends RuntimeException {
 
+    public UserNotFoundException(String e)
+    {
+        super(e);
+    }
 }

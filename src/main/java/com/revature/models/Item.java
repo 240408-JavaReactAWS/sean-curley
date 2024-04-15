@@ -13,16 +13,22 @@ public class Item {
     private int itemId;
     private String name;
     private boolean biggerThanBreadBox;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     //No-args constructor needed for Jackson databind
     public Item() {
     }
 
     //All-args constructor
-    public Item(int itemId, String name, boolean biggerThanBreadBox) {
+    public Item(int itemId, String name, boolean biggerThanBreadBox, User user) {
         this.itemId = itemId;
         this.name = name;
         this.biggerThanBreadBox = biggerThanBreadBox;
+        this.user = user;
     }
 
     public int getItemId() {
@@ -49,6 +55,18 @@ public class Item {
         this.name = name;
     }
 
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public boolean getBiggerThanBreadBox() {
+        return this.biggerThanBreadBox;
+    }
+    
     @Override
     public String toString() {
         return "Item{" +

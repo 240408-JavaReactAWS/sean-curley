@@ -2,15 +2,19 @@
 
 package com.revature.controllers;
 
+import com.revature.exceptions.InvalidAuthenticationException;
+import com.revature.exceptions.InvalidRegistrationException;
 import com.revature.exceptions.ItemNotFoundException;
 import com.revature.services.ItemService;
+import com.revature.services.UserService;
 import com.revature.models.Item;
+import com.revature.models.User;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController //Bean to convert HTTP requests
 @RequestMapping("/items") //Any HTTP request ending in /items will go to this app
@@ -20,59 +24,62 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
 
-    public ItemController(ItemService itemService)
+    public ItemController(ItemService itemService, UserService userService)
     {
         this.itemService = itemService;
     }
 
     @PostMapping()
-    public ResponseEntity<Item> addItemHandler(@RequestBody Item item)
+    public ResponseEntity<Item> addItemHandler(@RequestBody Item item, @RequestParam String token)
     {
-        return ResponseEntity.ok(itemService.addItem(item));
+        return ResponseEntity.ok(itemService.addItem(item, token));
     }
 
     @GetMapping()
-    public ResponseEntity<List<Item>> getAllItemsHandler()
+    public ResponseEntity<List<Item>> getAllItemsHandler(@RequestParam String token)
     {
-        return ResponseEntity.ok(itemService.getAllItems());
+        return ResponseEntity.ok(itemService.getAllItems(token));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Item> getItemByIdHandler(@PathVariable int id)
+    public ResponseEntity<Item> getItemByIdHandler(@PathVariable int id, @RequestParam String token)
     {
-        try{
-            Item toRet = itemService.getItemById(id);
-            return ResponseEntity.ok(toRet);
-        }
-        catch(ItemNotFoundException e)
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Item toRet = itemService.getItemById(id, token);
+        return ResponseEntity.ok(toRet);
     }
 
-    @PatchMapping()
-    public ResponseEntity<Item> updateItemByIdHandler(@RequestBody Item item)
+    @PatchMapping("/{id}")
+    public ResponseEntity<Item> updateItemByIdHandler(@RequestBody Item item, @RequestParam String token)
     {
-        try{
-            Item toUpdate = itemService.updateItemById(item);
-            return ResponseEntity.ok(toUpdate);
-        }
-        catch(ItemNotFoundException e)
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Item toUpdate = itemService.updateItemById(item, token);
+        return ResponseEntity.ok(toUpdate);
+
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Item> deleteItemByIdHandler(@PathVariable int id)
+    public ResponseEntity<Item> deleteItemByIdHandler(@PathVariable int id, @RequestParam String token)
     {
-        try{
-            Item toRet = itemService.deleteItemById(id);
-            return ResponseEntity.ok(toRet);
-        }
-        catch(ItemNotFoundException e)
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Item toRet = itemService.deleteItemById(id, token);
+        return ResponseEntity.ok(toRet);
+    }
+
+    @ExceptionHandler(InvalidRegistrationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody String handleInvalidRegistration(InvalidRegistrationException e)
+    {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(ItemNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody String handleMessageNotFound(ItemNotFoundException e)
+    {
+        return e.getMessage();
+    }
+    @ExceptionHandler(InvalidAuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public @ResponseBody String handleInvalidUser(InvalidAuthenticationException e)
+    {
+        return e.getMessage();
     }
 }

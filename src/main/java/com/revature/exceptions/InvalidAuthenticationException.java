@@ -1,7 +1,7 @@
 package com.revature.exceptions;
 
-public class InvalidAuthenticationException {
-    public InvalidAuthenticationException() {
-        // TODO Auto-generated method stub
+public class InvalidAuthenticationException extends RuntimeException {
+    public InvalidAuthenticationException(String e) {
+        super(e);
     }
 }

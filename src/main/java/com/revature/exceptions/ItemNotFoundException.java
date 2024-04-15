@@ -1,7 +1,7 @@
 package com.revature.exceptions;
 
 //Thrown whenever a request tries to access an item not found in the database
-public class ItemNotFoundException extends Exception{
+public class ItemNotFoundException extends RuntimeException{
 
     public ItemNotFoundException(String e)
     {

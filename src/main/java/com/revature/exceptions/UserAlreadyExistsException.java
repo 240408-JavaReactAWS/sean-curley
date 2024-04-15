@@ -1,7 +1,7 @@
 package com.revature.exceptions;
 
-public class UserAlreadyExistsException {
-    public UserAlreadyExistsException() {
-        // TODO Auto-generated method stub
+public class UserAlreadyExistsException extends RuntimeException {
+    public UserAlreadyExistsException(String e) {
+        super(e);   
     }
 }

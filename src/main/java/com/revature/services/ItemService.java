@@ -1,9 +1,11 @@
 package com.revature.services;
 
 import com.revature.DAOs.ItemDAO;
+import com.revature.DAOs.UserDAO;
+import com.revature.exceptions.InvalidAuthenticationException;
 import com.revature.exceptions.ItemNotFoundException;
 import com.revature.models.Item;
-
+import com.revature.models.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,19 +19,34 @@ public class ItemService {
 
     @Autowired
     private ItemDAO itemDAO;
+    private UserDAO userDAO;
 
-    public ItemService(ItemDAO itemDAO)
+    public ItemService(ItemDAO itemDAO, UserDAO userDAO)
     {
         this.itemDAO = itemDAO;
+        this.userDAO = userDAO;
     }
 
     /*
      * This function allows a user to retrieve all items from the database.
      * The function returns a list of items to be returned in the response body by the ItemController.
      */
-    public List<Item> getAllItems()
+    public List<Item> getAllItems(String token) throws InvalidAuthenticationException
     {
-        return itemDAO.findAll();
+        List<Item> toRet = new ArrayList<Item>();
+        User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
+        if(user.getUserId() == 1)
+        {
+            toRet.addAll(itemDAO.findAll());
+        }
+        else{
+            Optional<List<Item>> mightBeAList = itemDAO.findByUser(user);
+            if(mightBeAList.isPresent())
+            {
+                toRet.addAll(mightBeAList.get());
+            }
+        } 
+        return toRet;   
     }
 
     /*
@@ -38,8 +55,10 @@ public class ItemService {
      * if that id does not exist.
      * The function returns the item requested to be returned in the response body by the ItemController. 
      */
-    public Item getItemById(int id) throws ItemNotFoundException
+    public Item getItemById(int id, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
+        User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
+        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         return itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
     }
 
@@ -47,8 +66,10 @@ public class ItemService {
      * This function allows a user to add a new item to the database.
      * The function returns the new saved item to be returned in the response body by the ItemController.
      */
-    public Item addItem(Item item)
+    public Item addItem(Item item, String token) throws InvalidAuthenticationException
     {
+        User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
+        item.setUser(user);
         return itemDAO.save(item);
     }
 
@@ -58,8 +79,10 @@ public class ItemService {
      * if that id does not exist.
      * The function returns the updated item to be returned in the response body by the ItemController.
      */
-    public Item updateItemById(Item item) throws ItemNotFoundException
+    public Item updateItemById(Item item, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
+        User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
+        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toChange = itemDAO.findById(item.getItemId()).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         toChange.setName(item.getName());
         toChange.setBiggerThanBreadBox(item.isBiggerThanBreadBox());
@@ -72,8 +95,10 @@ public class ItemService {
      * if that id does not exist.
      * The function returns the updated item to be returned in the response body by the ItemController.
      */
-    public Item updateItemNameById(int id, String newName) throws ItemNotFoundException
+    public Item updateItemNameById(int id, String newName, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
+        User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
+        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toRet = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         toRet.setName(newName);
         itemDAO.save(toRet);
@@ -85,8 +110,10 @@ public class ItemService {
      * if that id does not exist.
      * The function returns the updated item to be returned in the response body by the ItemController.
      */
-    public Item updateItemSizeById(int id, boolean newSize) throws ItemNotFoundException
+    public Item updateItemSizeById(int id, boolean newSize, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
+        User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
+        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toRet = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         toRet.setBiggerThanBreadBox(newSize);
         itemDAO.save(toRet);
@@ -98,22 +125,13 @@ public class ItemService {
      * if that id does not exist.
      * The function returns the deleted item to be returned in the response body by the ItemController.
      */
-    public Item deleteItemById(int id) throws ItemNotFoundException
+    public Item deleteItemById(int id, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
+        User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
+        itemDAO.findByUser(user).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toDel = new Item();
         toDel = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         itemDAO.deleteById(id);
         return toDel;
-    }
-
-    public List<Item> getItemsByUserId(int id)
-    {
-        ArrayList<Item> list = new ArrayList<Item>();
-        Optional<List<Item>> mightBeAList = itemDAO.findByUserId(id);
-        if(mightBeAList.isPresent())
-        {
-            list.addAll(mightBeAList.get());
-        }
-        return list;
     }
 }
