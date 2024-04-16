@@ -58,8 +58,12 @@ public class ItemService {
     public Item getItemById(int id, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
-        return itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+        Item toRet = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+        if(user.getIsAdmin() == false && toRet.getUserId() != user.getUserId())
+        {   
+            throw new InvalidAuthenticationException("Not your item!");
+        }
+        return toRet;
     }
 
     /*
@@ -69,7 +73,7 @@ public class ItemService {
     public Item addItem(Item item, String token) throws InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        item.setUser(user);
+        item.setUserId(user.getUserId());
         return itemDAO.save(item);
     }
 
@@ -82,12 +86,14 @@ public class ItemService {
     public Item updateItemById(Item item, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toChange = itemDAO.findById(item.getItemId()).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+        if(user.getIsAdmin() == false && toChange.getUserId() != user.getUserId())
+        {   
+            throw new InvalidAuthenticationException("Not your item!");
+        }
         toChange.setName(item.getName());
         toChange.setBiggerThanBreadBox(item.isBiggerThanBreadBox());
-        itemDAO.save(toChange);
-        return toChange;
+        return itemDAO.save(toChange);
     }
     /*
      * This function allows a user to update an item's name by passing the item's id and the new name in the request body.
@@ -98,8 +104,11 @@ public class ItemService {
     public Item updateItemNameById(int id, String newName, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toRet = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+        if(user.getIsAdmin() == false && toRet.getUserId() != user.getUserId())
+        {   
+            throw new InvalidAuthenticationException("Not your item!");
+        }
         toRet.setName(newName);
         itemDAO.save(toRet);
         return toRet;
@@ -113,8 +122,11 @@ public class ItemService {
     public Item updateItemSizeById(int id, boolean newSize, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
         Item toRet = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+        if(user.getIsAdmin() == false && toRet.getUserId() != user.getUserId())
+        {   
+            throw new InvalidAuthenticationException("Not your item!");
+        }
         toRet.setBiggerThanBreadBox(newSize);
         itemDAO.save(toRet);
         return toRet;
@@ -128,10 +140,14 @@ public class ItemService {
     public Item deleteItemById(int id, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        itemDAO.findByUserId(user.getUserId()).orElseThrow(() -> new InvalidAuthenticationException("Not your item!"));
-        Item toDel = new Item();
-        toDel = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+        Item toDel = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+
+        if(user.getIsAdmin() == false && toDel.getUserId() != user.getUserId())
+        {   
+            throw new InvalidAuthenticationException("Not your item!");
+        }
         itemDAO.deleteById(id);
         return toDel;
     }
+    
 }

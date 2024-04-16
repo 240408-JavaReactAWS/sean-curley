@@ -36,9 +36,8 @@ public class UserService {
         String password = user.getPassword();
         if(username == null || password == null)
         {
-            System.err.println("Something bad happened in the registration service.");
             throw new InvalidRegistrationException("Unable to register new user:" + 
-                username + ". Username and password must be at least four characters.");
+                username + ". Username and password must be specified.");
         }
         if(username.length() < 4 || password.length() < 4)
         {
@@ -87,14 +86,12 @@ public class UserService {
 
     public String generateToken()
     {
-        /*String toRet = "";
+        String toRet = "";
         Random random = new Random();
         for(int i = 0; i < 10; i++)
         {
             toRet += tokenChars.charAt(random.nextInt(tokenChars.length()));
         }
-        */
-        String toRet = "thisisatoken";
         return toRet;
     }
 }

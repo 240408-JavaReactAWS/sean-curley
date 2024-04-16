@@ -23,9 +23,9 @@ Using Spring Boot, create a simple API for creating and managing items. The item
     - As a user, I can view a singular Item by its ID (HINT: Use Path Params to select a Item by its ID) **DONE**
     - As a user, I can update a Item (Change the name or other properties) **DONE**
     - As a user, I can delete a Item by its ID (HINT: Use Path Params to select a Item by its ID) **DONE**
-    - As a user, I can create an account to hold my Items
-    - As a user, I can login to my account (which is stored in the database)
-    - As a user, I can view the Items associated with my account
+    - As a user, I can create an account to hold my Items **DONE**
+    - As a user, I can login to my account (which is stored in the database) **DONE**
+    - As a user, I can view the Items associated with my account **DONE**
 
 - Other Optional Requirements include the following:
     - Giving accounts roles (USER and ADMIN) so Admins can view everyone's Items while a User can only view their own

@@ -57,7 +57,7 @@ public class Item {
         return this.userId;
     }
 
-    public void setUser(User user) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
