@@ -28,7 +28,7 @@ Using Spring Boot, create a simple API for creating and managing items. The item
     - As a user, I can view the Items associated with my account **DONE**
 
 - Other Optional Requirements include the following:
-    - Giving accounts roles (USER and ADMIN) so Admins can view everyone's Items while a User can only view their own
+    - Giving accounts roles (USER and ADMIN) so Admins can view everyone's Items while a User can only view their own **DONE**
     - Using JUnit to test Service Layer methods (70% coverage at least would be optimal)
 
 - **NOTE** Responses from the API must include proper response bodies (in JSON) and **status codes** (i.e. If I try to go to http://localhost:8080/To-Do/5 and there is no resource there, I should receive a 404 status code (NOT FOUND) in the response, but if the resource is there I should receive a 200 status code (OK) instead)
