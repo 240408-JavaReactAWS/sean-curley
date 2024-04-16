@@ -49,9 +49,9 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Item> updateItemByIdHandler(@RequestBody Item item, @RequestParam String token)
+    public ResponseEntity<Item> updateItemByIdHandler(@PathVariable int id, @RequestBody Item item, @RequestParam String token)
     {
-        Item toUpdate = itemService.updateItemById(item, token);
+        Item toUpdate = itemService.updateItemById(id, item, token);
         return ResponseEntity.ok(toUpdate);
 
     }
@@ -63,15 +63,8 @@ public class ItemController {
         return ResponseEntity.ok(toRet);
     }
 
-    @ExceptionHandler(InvalidRegistrationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public @ResponseBody String handleInvalidRegistration(InvalidRegistrationException e)
-    {
-        return e.getMessage();
-    }
-
     @ExceptionHandler(ItemNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody String handleMessageNotFound(ItemNotFoundException e)
     {
         return e.getMessage();

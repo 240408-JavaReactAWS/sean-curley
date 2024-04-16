@@ -83,10 +83,10 @@ public class ItemService {
      * if that id does not exist.
      * The function returns the updated item to be returned in the response body by the ItemController.
      */
-    public Item updateItemById(Item item, String token) throws ItemNotFoundException, InvalidAuthenticationException
+    public Item updateItemById(int id, Item item, String token) throws ItemNotFoundException, InvalidAuthenticationException
     {
         User user = userDAO.findByToken(token).orElseThrow(() -> new InvalidAuthenticationException("Invalid token!"));
-        Item toChange = itemDAO.findById(item.getItemId()).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
+        Item toChange = itemDAO.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found!"));
         if(user.getIsAdmin() == false && toChange.getUserId() != user.getUserId())
         {   
             throw new InvalidAuthenticationException("Not your item!");
